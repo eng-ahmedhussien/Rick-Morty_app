@@ -1,23 +1,22 @@
+//
+//  RickAndMortyApp.swift
+//  RickAndMortyApp
+//
+//  Created by Ahmed on 09/09/2026.
+//
+
 import SwiftUI
 
 @main
 struct RickAndMortyApp: App {
+    @State private var container = AppContainer()
+
     var body: some Scene {
         WindowGroup {
-            RootView()
+            CharactersListScreen(
+                characterRepository: container.characterRepository,
+                episodeRepository: container.episodeRepository
+            )
         }
     }
-}
-
-/// Temporary shell. Replaced by the characters list navigation stack in a later step.
-struct RootView: View {
-    var body: some View {
-        VStack{
-            Text("test")
-        }
-    }
-}
-
-#Preview {
-    RootView()
 }
