@@ -25,7 +25,7 @@ struct EpisodeRepository: EpisodeRepositoryProtocol {
 
         do {
             let fetched = try await remoteDataSource.fetchEpisodes(ids: missingIDs).map(EpisodeMapper.map)
-            try? await localStore.upsertEpisodes(fetched)
+            try? await localStore.cacheEpisodes(fetched)
             return order(cached + fetched, by: ids)
         } catch {
             // Offline with a partial cache: show what's stored rather than

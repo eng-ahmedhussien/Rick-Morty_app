@@ -7,8 +7,10 @@
 
 import Foundation
 
-enum CharacterStatus: String, Sendable, CaseIterable {
+enum CharacterStatus: String, CaseIterable, Identifiable, Sendable {
     case alive = "Alive"
     case dead = "Dead"
     case unknown = "unknown"
+    
+    var id: String { rawValue }
 }

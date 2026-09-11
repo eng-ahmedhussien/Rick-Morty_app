@@ -1,16 +1,10 @@
-//
-//  HTTPClient.swift
-//  HTTPClient
-//
-//  Created by Ahmed on 09/09/2026.
-//
-
 import Foundation
 
 
 protocol HTTPClient: Sendable {
     func send<E: Endpoint, T: Decodable & Sendable>(_ endpoint: E) async throws -> T
 }
+
 
 struct URLSessionHTTPClient: HTTPClient {
     private let session: URLSession
@@ -25,15 +19,22 @@ struct URLSessionHTTPClient: HTTPClient {
     }
 
     func send<E: Endpoint, T: Decodable & Sendable>(_ endpoint: E) async throws -> T {
-        let request: URLRequest
-        do {
-            request = try endpoint.asURLRequest()
-        } catch let error as NetworkError {
-            throw error
-        } catch {
-            throw NetworkError.encoding(message: error.localizedDescription)
-        }
+        let request = try Self.makeRequest(from: endpoint)
+        NetworkLogger.logRequest(request)
 
+        do {
+            let (data, httpResponse) = try await performRequest(request)
+            NetworkLogger.logResponse(request: request, response: httpResponse, data: data)
+            return try decode(data)
+        } catch {
+            NetworkLogger.logError(request: request, error: String(describing: error))
+            throw error
+        }
+    }
+
+    // MARK: - Steps
+
+    private func performRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         let data: Data
         let response: URLResponse
         do {
@@ -54,12 +55,26 @@ struct URLSessionHTTPClient: HTTPClient {
             throw NetworkError.emptyResponse
         }
 
+        return (data, httpResponse)
+    }
+
+    private func decode<T: Decodable>(_ data: Data) throws -> T {
         do {
             return try decoder.decode(T.self, from: data)
         } catch let decodingError as DecodingError {
             throw NetworkError.decoding(underlying: decodingError)
         } catch {
             throw NetworkError.unknown(message: error.localizedDescription)
+        }
+    }
+
+    private static func makeRequest(from endpoint: some Endpoint) throws -> URLRequest {
+        do {
+            return try endpoint.asURLRequest()
+        } catch let error as NetworkError {
+            throw error
+        } catch {
+            throw NetworkError.encoding(message: error.localizedDescription)
         }
     }
 
@@ -73,6 +88,8 @@ struct URLSessionHTTPClient: HTTPClient {
 }
 
 extension JSONDecoder {
+    /// `air_date` on episodes is the only snake_case field the API returns;
+    /// everything else is already single lowercase words.
     static var rickAndMortyDefault: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase

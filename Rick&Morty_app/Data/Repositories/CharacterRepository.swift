@@ -15,9 +15,8 @@ struct CharacterRepository: CharacterRepositoryProtocol {
         do {
             let response = try await remoteDataSource.fetchCharacters(page: page, filter: filter)
             let characters = response.results.map(CharacterMapper.map)
-            // Write-through: a cache failure shouldn't fail a successful
-            // network response, so it's swallowed rather than rethrown.
-            try? await localStore.upsertCharacters(characters)
+
+            try? await localStore.cacheCharacters(characters)
             return Page(items: characters, hasNextPage: response.info.next != nil)
         } catch NetworkError.notFound {
             // The API also uses 404 to mean "this filter matched nothing" —

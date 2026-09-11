@@ -37,20 +37,4 @@ enum CharacterCacheMapper {
             episodeIDs: cached.episodeIDs
         )
     }
-
-    /// Copies fresh field values onto an existing row in place, so a
-    /// write-through update doesn't delete+reinsert and disturb SwiftData's
-    /// identity tracking for that object.
-    static func update(_ cached: CachedCharacter, with character: Character) {
-        cached.name = character.name
-        cached.statusRaw = character.status.rawValue
-        cached.species = character.species
-        cached.type = character.type
-        cached.genderRaw = character.gender.rawValue
-        cached.imageURLString = character.imageURL?.absoluteString
-        cached.originName = character.originName
-        cached.locationName = character.locationName
-        cached.episodeIDs = character.episodeIDs
-        cached.fetchedAt = .now
-    }
 }

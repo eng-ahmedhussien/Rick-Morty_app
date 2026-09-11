@@ -17,7 +17,6 @@ struct CharacterDTO: Decodable, Sendable {
     let origin: NamedResourceDTO
     let location: NamedResourceDTO
     let image: String
-    /// URLs like "https://rickandmortyapi.com/api/episode/1".
     let episode: [String]
     let url: String
     let created: String
