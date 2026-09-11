@@ -13,7 +13,7 @@ enum CharacterEndpoint: Endpoint {
                 items.append(URLQueryItem(name: "name", value: filter.searchText))
             }
             if let status = filter.status {
-                // The API expects lowercase values ("alive", "dead", "unknown").
+                ///The API expects lowercase values ("alive", "dead", "unknown").
                 items.append(URLQueryItem(name: "status", value: status.rawValue.lowercased()))
             }
             return items

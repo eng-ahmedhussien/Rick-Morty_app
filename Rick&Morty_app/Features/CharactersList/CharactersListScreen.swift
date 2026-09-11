@@ -127,3 +127,13 @@ struct CharactersListScreen: View {
         }
     }
 }
+
+#if DEBUG
+#Preview {
+    @Previewable @State var container = AppContainer()
+    CharactersListScreen(
+        characterRepository: container.characterRepository,
+        episodeRepository: container.episodeRepository
+    )
+}
+#endif

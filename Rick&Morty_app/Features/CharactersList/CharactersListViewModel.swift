@@ -83,10 +83,7 @@ final class CharactersListViewModel {
     /// within five rows of the end.
     func loadNextPageIfNeeded(currentItem: Character) async {
         guard state == .loaded, hasNextPage, !isLoadingNextPage else { return }
-       /// guard let index = characters.firstIndex(of: currentItem) else { return } //O(n).
-        ///guard index >= characters.count - 5 else { return }
         guard characters.suffix(5).contains(where: { $0.id == currentItem.id }) else { return }
-       
         await loadNextPage()
     }
 

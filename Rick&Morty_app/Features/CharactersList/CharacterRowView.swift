@@ -37,3 +37,25 @@ struct CharacterRowView: View {
         )
     }
 }
+
+#if DEBUG
+#Preview {
+    List{
+        CharacterRowView(
+            character: Character(
+                id: 1,
+                name: "marty",
+                status: .alive,
+                species: "",
+                type: "Human",
+                gender: .male,
+                imageURL: URL(string: "https://rickandmortyapi.com/api/character/avatar/1.jpeg"),
+                originName: "",
+                locationName: "",
+                episodeIDs: [1,2,3]
+            )
+        )
+    }
+    
+}
+#endif

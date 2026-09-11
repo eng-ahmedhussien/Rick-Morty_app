@@ -28,8 +28,8 @@ struct EpisodeRepository: EpisodeRepositoryProtocol {
             try? await localStore.cacheEpisodes(fetched)
             return order(cached + fetched, by: ids)
         } catch {
-            // Offline with a partial cache: show what's stored rather than
-            // failing the whole episodes section over the missing ones.
+            /// Any other failure (offline, timeout, server error, ...) falls
+            /// read from cash 
             guard !cached.isEmpty else { throw error }
             return order(cached, by: ids)
         }
